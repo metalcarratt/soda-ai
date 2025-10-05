@@ -1,6 +1,8 @@
 # Welcome to SODA-AI!
 ![Logo](./soda4.jpeg)
 
+**Note**: This is just a pet-project / PoC at the moment. If you find it useful, have suggestions for improvements, or want to help please reach out.
+
 SODA-AI stands for Schema Object Driven Agentic AI.
 
 It's inspired by DSPy but focuses more on defining inputs and outputs via a Zod Schema than using Python Signatures.
@@ -168,8 +170,8 @@ The above tool returns today's date. If you try querying your model you may noti
 The tool needs to provide:
 - a `name`
 - `instruct` - a brief description of what the tool does (so the model can decide if it wants to call it or not)
-- `deterministic` - whether calling the tool with the same input will ever yield different results (in most cases probably deterministic is `false`, never returning different results. But if you have a random number generator, that would be `true`)
-- 'call` - the function to call when the tool is invoked. By default the tool call takes no arguments and returns a string. If this is what your are doing, this will be enough.
+- `deterministic` - whether calling the tool with the same input will ever yield different results (in most cases probably deterministic is `true`, never returning different results. But if you have a random number generator, that would be `false`)
+- `call` - the function to call when the tool is invoked. By default the tool call takes no arguments and returns a string. If this is what your are doing, this will be enough.
 
 ```ts
 const sortItemsTool = createTool({
@@ -210,7 +212,8 @@ export const formatTodaysDate = fn(myModel, schema);
 This will pass the `dateTool` tool to the `formatTodaysDate` function. Then a user can call it like so:
 
 ```ts
-const response = await formatTodaysDate({format: 'DD/MM/YYYY'});console.log(response);
+const response = await formatTodaysDate({format: 'DD/MM/YYYY'});
+console.log(response);
 ```
 
 And they will get today's date correctly formatted.

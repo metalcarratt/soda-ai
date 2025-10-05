@@ -1,0 +1,11 @@
+{
+  "name": "soda-ai",
+  "version": "1.0.0",
+  "description": "![Logo](./soda4.jpeg)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "CC-BY-NC-4.0"
+}
