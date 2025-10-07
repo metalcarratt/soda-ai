@@ -1,0 +1,13 @@
+{
+  "name": "soda-examples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@langchain/ollama": "^0.2.4",
+    "langchain": "^0.3.33",
+    "soda-ai": "file:../dist"
+  }
+}

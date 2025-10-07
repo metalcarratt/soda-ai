@@ -1,0 +1,54 @@
+body {
+    width: 800px;
+    margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+    body {
+        width: 100%;
+    }
+} 
+
+h2 a {
+    margin-left: 4px;
+    background-color: #ece4f1;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 400;
+    font-family: sans-serif;
+    font-size: 14px;
+    text-decoration: none;
+    color: #553d72;
+}
+
+.section.showing > h2 > a.showBtn {
+    display: none;
+}
+
+.section.hidden > h2 > a.hideBtn {
+    display: none;
+}
+
+.section.hidden pre,
+.section.hidden .subSection  {
+    display: none;
+}
+
+.section pre {
+    background-color: aliceblue;
+    padding: 8px;
+    border: 1px solid #abc5c2;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+.section.error pre {
+    background-color: #fff0f0;
+}
+
+.subSection {
+    border-left: 4px solid #bfbebe;
+    padding-left: 16px;
+}
