@@ -12,7 +12,6 @@ Use the `createTool` function to easily define a new tool:
 const dateTool = createTool({
   name: "getDate",
   instruct: "returns today's date",
-  deterministic: true,
   call: () => `${new Date()}`,
 });
 ```
@@ -23,8 +22,9 @@ The tool needs to provide:
 
 - a `name`
 - `instruct` - a brief description of what the tool does (so the model can decide if it wants to call it or not)
-- `deterministic` - whether calling the tool with the same input will ever yield different results (in most cases probably deterministic is `true`, never returning different results. But if you have a random number generator, that would be `false`)
 - `call` - the function to call when the tool is invoked. By default the tool call takes no arguments and returns a string. If this is what your are doing, this will be enough.
+
+### With a signature
 
 ```ts
 const sortItemsTool = createTool({
@@ -42,6 +42,19 @@ const sortItemsTool = createTool({
 ```
 
 This tool also defines a `signature` which is which inputs and outputs the tool call should take and return. In this case it accepts an `items`, which is an array of numbers, and return an array of numbers as it's output.
+
+### Non-deterministic
+
+To help the LLM not repeatedly call the same tool, by default Soda AI tells it that your tools are deterministic, meaning that given the same input it should always return the same output. If this is _not_ what you want (for example, if your tool is a random number generator), then pass in the parameter `deterministic: false`:
+
+```ts
+const rng = createTool({
+  name: "rng",
+  instruct: "generates a random number",
+  deterministic: false,
+  call: () => `${Math.random()}`,
+});
+```
 
 ## Create a function and pass in the tool
 

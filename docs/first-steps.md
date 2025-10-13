@@ -60,7 +60,7 @@ The last thing is to call it.
 This is the easiest part. Typscript makes sure the inputs and outputs all work, so to call it just run:
 
 ```ts
-const response = await translateFn({
+const response = await translate({
     text: '좋은 아침이에요',
     language: "English"
 });
