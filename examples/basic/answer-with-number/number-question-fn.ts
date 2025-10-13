@@ -1,4 +1,4 @@
-import { localModel } from "../models/localModel";
+import { localModel } from "../../models/localModel";
 import { soda } from "soda-ai";
 import z from "zod";
 

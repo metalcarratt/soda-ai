@@ -4,7 +4,7 @@
   "description": "schema driven agentic ai",
   "type": "module",
   "scripts": {
-    "build": "tsc && cp scripts/dist-package.json dist/package.json",
+    "build": "tsc && cp scripts/dist-package.json dist/package.json && sh scripts/copy-debug-assets.sh",
     "start": "npm run build && node dist/index.js",
     "test": "vitest"
   },

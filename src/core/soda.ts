@@ -5,6 +5,11 @@ import { callTools } from "../tools";
 import type { InputSchema, Model, OutputSchema, Signature } from "./types";
 import { getDebugCollector } from "../debug-collector";
 import util from 'node:util';
+import { createToolData, printCallsMade } from '../tools/tool-data';
+
+type Options = {
+    debug?: boolean
+}
 
 export const soda = <I extends InputSchema, O extends OutputSchema>(
     model: Model,
@@ -21,19 +26,22 @@ export const soda = <I extends InputSchema, O extends OutputSchema>(
         data: Output
     }
 
-    const call = async (input: Input, debug?: boolean): Promise<CallResponse> => {
+    const call = async (input: Input, options?: Options): Promise<CallResponse> => {
+        const debug = options?.debug ?? false;
 
         const debugCollector = getDebugCollector();
         try {
-            let toolContext;
+            const toolData = createToolData(sig.tools);
             if (sig.tools?.length) {
                 const toolDebugCollector = debugCollector.createSubSection('Call tools');
-                toolContext = await callTools(model, sig, input, sig.tools, toolDebugCollector);
-                console.log('Got tool context', toolContext);
-                toolDebugCollector.collect('Final tool context:', toolContext);
-            }
 
-            const prompt = createPrompt(sig, input, examples, toolContext, debug);
+                await callTools(model, sig, input, toolData, toolDebugCollector);
+                // console.log('Got tool context', toolContext);
+                toolDebugCollector.collect('Final tool context:', printCallsMade(toolData));
+            }
+            const toolContext = printCallsMade(toolData);
+
+            const prompt = createPrompt(sig, input, examples, toolContext);
             if (debug) {
                 debugCollector.collect('Main prompt', prompt);
             }

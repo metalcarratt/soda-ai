@@ -237,3 +237,7 @@ And they will get today's date correctly formatted.
 ## Function chaining and branching
 
 TBD
+
+## Examples:
+
+See [examples](./examples/readme.md)

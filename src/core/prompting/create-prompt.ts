@@ -9,10 +9,9 @@ export const createPrompt = <I extends InputSchema, O extends OutputSchema>(
     userInput: z.infer<I>,
     examples?: { given: z.infer<I>, expect: z.infer<O>, incorrect?: string }[],
     toolContext?: string,
-    debug?: boolean
 ) => {
     const prompt = `
-Your task is to ${signature.action}
+Your task is to ${signature.action}. ${printRules(signature.rules)} 
 
 Given the following input in triple quotes:
 ${printInputs(signature, userInput)}
@@ -28,6 +27,13 @@ ${examples ? printExamples<I, O>(examples) : ''}
     // Do not include any additional explanation, commentary, or alternative phrasing.
     // Only output in the format above.
 
-    if (debug) console.log('prompt', prompt);
     return prompt;
+}
+
+const printRules = (rules?: string[]) => {
+    if (!rules) return '';
+
+    const rulesText = rules.map(rule => `- ${rule}`).join('\n');
+
+    return `Rules:\n${rulesText}`;
 }

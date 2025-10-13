@@ -10,6 +10,7 @@ export type OutputSchema = ZodObject<ZodRawShape>;
 
 export type Signature<I, O> = {
     action: string,
+    rules?: string[],
     inputs: I,
     outputs: O,
     examples?: { input: I, output: O }[],

@@ -12,7 +12,7 @@ export type ToolInput = ZodObject<ZodRawShape>;
 export type ToolOutput = ZodTypeAny;
 
 export type Tool<
-    I extends ToolInput, 
+    I extends ToolInput,
     O extends ToolOutput
 > = {
     name: string,
@@ -20,4 +20,18 @@ export type Tool<
     deterministic: boolean,
     signature: ToolSignature<I, O>,
     call: (arg: z.infer<I>) => z.infer<O>
+}
+
+type ToolCall = {
+    toolName: string,
+    args: Record<string, unknown>,
+    response: unknown
+}
+
+export type ToolData<
+    I extends ToolInput,
+    O extends ToolOutput
+> = {
+    tools: Tool<I, O>[],
+    callsMade: ToolCall[]
 }

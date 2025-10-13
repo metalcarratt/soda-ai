@@ -3,7 +3,8 @@ import type { InputSchema, Model, OutputSchema, Signature } from "../core";
 import { parseResponse } from "../core";
 import type { DebugCollector } from '../debug-collector';
 import { getToolingPrompt } from "./get-tooling-prompt";
-import type { Tool } from "./types";
+import type { Tool, ToolData } from "./types";
+import { printCallsMade, printToolData } from "./tool-data";
 
 const MAX_LAYERS = 1;
 
@@ -18,12 +19,12 @@ export const callTools = async <I extends InputSchema, O extends OutputSchema>(
     signature: Signature<I, O>,
     userInput: z.infer<I>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tools: Tool<any, any>[],
+    // tools: Tool<any, any>[],
+    tools: ToolData<any, any>,
     debugCollector: DebugCollector,
-    toolContext: string = '',
     layers: number = 0
-): Promise<string> => {
-    const prompt = getToolingPrompt(signature, userInput, tools, toolContext);
+) => {
+    const prompt = getToolingPrompt(signature, userInput, tools);
     const layerCollector = debugCollector.createSubSection('Tooling layer ' + (layers + 1));
     layerCollector.collect('Tooling prompt', prompt);
 
@@ -36,32 +37,34 @@ export const callTools = async <I extends InputSchema, O extends OutputSchema>(
         // 2. Call tool
         layerCollector.collect('Tooling Args', JSON.stringify(args));
 
-        const callTool = tools.find(tool => tool.name === call);
-        const parsedArgs = callTool?.signature?.input?.parse(args ?? {});
-        const context = callTool?.call(parsedArgs ?? {});
+        const callTool = tools.tools.find(tool => tool.name === call);
+        if (!callTool) {
+            return;
+        }
+
+        const parsedArgs = callTool.signature?.input?.parse(args ?? {});
+
+        const context = callTool.call(parsedArgs ?? {});
 
         // 3. Parse result
         // console.log('Result of calling tool', context);
         layerCollector.collect('Result of calling tool', JSON.stringify(context) ?? 'undefined');
 
-        const newToolContext = `
-${toolContext}
---- Tool: ${callTool?.name} ---
-Input: ${JSON.stringify(parsedArgs)}
-Output: ${JSON.stringify(context)}
+        const callDetails = {
+            toolName: callTool.name,
+            args,
+            response: context
+        };
+        tools?.callsMade.push(callDetails);
 
-        `;
         // console.log('New tool context', newToolContext);
-        layerCollector.collect('New tool context', newToolContext);
+        layerCollector.collect('New tool context', printCallsMade(tools));
 
-        if (layers > MAX_LAYERS) {
-            return newToolContext;
-        } else {
-            return callTools(model, signature, userInput, tools, debugCollector, newToolContext, layers + 1);
+        if (layers <= MAX_LAYERS) {
+            callTools(model, signature, userInput, tools, debugCollector, layers + 1);
         }
     }
 
-    return toolContext;
 }
 
 

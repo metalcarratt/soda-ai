@@ -1,23 +1,27 @@
 import { z } from "zod";
 import type { ZodObject, ZodTypeAny } from "zod";
 import type { InputSchema, OutputSchema, Signature } from "../core";
-import type { Tool } from "./types";
+import type { ToolData } from "./types";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import { printCallsMade, printToolData } from "./tool-data";
 
 export const getToolingPrompt = <I extends InputSchema, O extends OutputSchema>(
     signature: Signature<I, O>,
     userInput: z.infer<I>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    tools: Tool<any, any>[],
-    toolContext?: string
+    tools: ToolData<any, any>,
 ) => {
-    const toolInstructions = tools.map(tool => {
-        const schema = tool.signature?.input;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const schemaText = schema ? printInputSchema(schema as ZodObject<any>) : '  • (no input)';
-        const determinsticText = `Deterministic: ${tool.deterministic}`;
-        return `- ${tool.name}: ${tool.instruct}\n${schemaText}\n${determinsticText}`;
-    });
+    // const toolInstructions = tools.tools.map(tool => {
+    //     const schema = tool.signature?.input;
+    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //     const schemaText = schema ? printInputSchema(schema as ZodObject<any>) : '  • (no input)';
+    //     const determinsticText = `Deterministic: ${tool.deterministic}`;
+    //     return `- ${tool.name}: ${tool.instruct}\n${schemaText}\n${determinsticText}`;
+    // });
+
+    const toolInstructions = printToolData(tools);
+
+    const toolContext = printCallsMade(tools);
 
     const expectedOutputs = Object.keys(signature.outputs.shape).join(', ');
     const providedInputs = Object.keys(signature.inputs.shape)
