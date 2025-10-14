@@ -17,7 +17,7 @@ Given the following input in triple quotes:
 ${printInputs(signature, userInput)}
 
 Respond with exactly the following format in triple quotes:
-${printOutputs(signature)}
+${printOutputs(signature, userInput)}
 
 ${toolContext ? 'You have been provided with the following context: ' + toolContext : ''}
 

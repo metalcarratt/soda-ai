@@ -1,0 +1,15 @@
+- Named Entity Recognition – extract names or organizations
+- Text Classification – assign labels to specific parts of a text or whole doc
+- Question Answering – respond to user queries with a direct answer grounded in context
+- Text Generation – produce structured answers in natural language
+- Summarization – condensing existing content
+- Entity Linking – connect mentions to knowledge bases
+- Retrieval – retrieve relevant data or docs, often via vector search
+- Translation – if speaking different languages
+- POS Tagging – part of speech (low-level syntax tagging)
+- Sentiment analysis – detect emotional tone
+- Justification generation – explaining why a decision was made (transparency and trust)
+- Sentencizer – sentences splitting and grammar parsing
+- Chunking – split documents into semantically meaningful units for embedding
+- Embedding generation – convert text to vectors
+- Multi-label clarification – multiple tags

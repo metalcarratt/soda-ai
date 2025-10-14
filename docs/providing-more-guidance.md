@@ -30,6 +30,29 @@ This is useful because sometimes when translating to Asian languages the LLM may
 
 For better results, use more examples, perhaps 2-3. If you have particular usecases, or see the LLM tripping up in particular ways, add an example for that usecase.
 
+## Provide rules
+
+You can provide rules to further constrains what the LLM does. This is basically an extension of the `action` property, but let's you provide an array of rules to more easily format your constraints:
+
+```ts
+const schema = {
+  action:
+    "confirm whether the provided value has a **similar communicative intent** to the expected value.",
+  rules: [
+    "Do not analyse tone, formality or time-specific context.",
+    "Focus only on whether the two expression serve the same **basic conversational purpose**.",
+  ],
+  inputs: z.object({
+    provided: z.string(),
+    expected: z.string(),
+  }),
+  outputs: z.object({
+    result: z.boolean(),
+    rationale: z.string(),
+  }),
+};
+```
+
 ## Explain what your output means
 
 Here's an example of en email checker, that checkes emails for bad content:
@@ -60,3 +83,33 @@ export const checkEmail = soda(myModel, schema);
 ```
 
 Here you can see the use of Zod's `describe` methods. Make use of these to provide further context to the LLM about what an output is intended to be. The prompt will make use of both the name, the type and the description to help guide the LLM toward giving you the response you expect.
+
+### Enrich descriptions with input variables
+
+If you put the name of an input variable in curly braces (`{}`) within a description, Soda AI will replace that variable with the value it receives at run time.
+
+For example:
+
+```ts
+const schema = {
+  action: "summarize the provided text within the specified word count limit",
+  rules: ["Do no exceed the word count limit"],
+  inputs: z.object({
+    text: z.string(),
+    wordCount: z.number(),
+  }),
+  outputs: z.object({
+    summary: z.string().describe("a summary less than {wordCount} words"),
+  }),
+};
+```
+
+The description of summary is `a summary less than {wordCount} words`. If the runtime execution of this function looks like this:
+
+```ts
+await summarize({ text, wordCount: 50 });
+```
+
+Then that description will become `a summary less than 50 words`.
+
+This is a stronger and more effective way to constrain the LLM's output than adding extra description in action or rules.

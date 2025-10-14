@@ -39,7 +39,7 @@ export const soda = <I extends InputSchema, O extends OutputSchema>(
                 // console.log('Got tool context', toolContext);
                 toolDebugCollector.collect('Final tool context:', printCallsMade(toolData));
             }
-            const toolContext = printCallsMade(toolData);
+            const toolContext = toolData.callsMade.length > 0 ? printCallsMade(toolData) : undefined;
 
             const prompt = createPrompt(sig, input, examples, toolContext);
             if (debug) {
