@@ -15,7 +15,7 @@ describe('summarize', () => {
     });
 
     test('summarize in ten words or less', async () => {
-        const response = await summarize({ text, wordCount: 10 }, { debug: true });
+        const response = await summarize({ text, wordCount: 10 });
 
         expectResponseKeys(response.data, ['summary']);
         const wordCount = countWords(response.data.summary);

@@ -47,7 +47,6 @@ export const callTools = async <I extends InputSchema, O extends OutputSchema>(
         const context = callTool.call(parsedArgs ?? {});
 
         // 3. Parse result
-        // console.log('Result of calling tool', context);
         layerCollector.collect('Result of calling tool', JSON.stringify(context) ?? 'undefined');
 
         const callDetails = {
@@ -57,7 +56,6 @@ export const callTools = async <I extends InputSchema, O extends OutputSchema>(
         };
         tools?.callsMade.push(callDetails);
 
-        // console.log('New tool context', newToolContext);
         layerCollector.collect('New tool context', printCallsMade(tools));
 
         if (layers <= MAX_LAYERS) {

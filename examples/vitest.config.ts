@@ -5,6 +5,6 @@ export default defineConfig({
         sequence: {
             concurrent: false
         },
-        fileParallelism: false
+        fileParallelism: false,
     },
 });

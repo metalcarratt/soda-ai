@@ -1,8 +1,6 @@
 import { z } from "zod";
-import type { ZodObject, ZodTypeAny } from "zod";
 import type { InputSchema, OutputSchema, Signature } from "../core";
 import type { ToolData } from "./types";
-import { zodToJsonSchema } from "zod-to-json-schema";
 import { printCallsMade, printToolData } from "./tool-data";
 
 export const getToolingPrompt = <I extends InputSchema, O extends OutputSchema>(
@@ -11,13 +9,6 @@ export const getToolingPrompt = <I extends InputSchema, O extends OutputSchema>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     tools: ToolData<any, any>,
 ) => {
-    // const toolInstructions = tools.tools.map(tool => {
-    //     const schema = tool.signature?.input;
-    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    //     const schemaText = schema ? printInputSchema(schema as ZodObject<any>) : '  • (no input)';
-    //     const determinsticText = `Deterministic: ${tool.deterministic}`;
-    //     return `- ${tool.name}: ${tool.instruct}\n${schemaText}\n${determinsticText}`;
-    // });
 
     const toolInstructions = printToolData(tools);
 
@@ -57,40 +48,19 @@ You may only call tools listed in the “List of tools” section. Do not invent
 Only re-call deterministic tools if the input has changed. Non-deterministic tools may be re-called if the output is needed again.
 
 
-To call a tool respond with exactly the following format in triple quotes:
+To call a tool respond with exactly the following JSON format in triple quotes:
 '''
-Finished: False
-Call: [tool name]
-Args: [JSON object matching the tool's input schema]
+{
+  finished: false,
+  call: tool name,
+  args: [JSON object matching the tool's input schema]
+}
 '''
 
 Or, if you think the context provided by other tools is sufficient, or if you beleive more context is needed but no tool is available
 to provide it, respond with exactly the following format in triple quotes:
 '''
-Finished: True
+{ finished: true }
 '''
     `;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const printInputSchema = (schema: ZodObject<any>) => {
-    const shape = schema.shape;
-    return Object.entries(shape)
-        .map(([key, value]) => {
-            const zodType = value as ZodTypeAny;
-            const typeName = getTypeName(zodType);
-            const desc = zodType.description ? ` - ${zodType.description}` : '';
-            return `  • ${key}: ${typeName}${desc}`;
-        })
-        .join('\n');
-};
-
-const getTypeName = (zodType: ZodTypeAny) => {
-    return JSON.stringify(zodToJsonSchema(zodType));
-    // const typeName = zodType._def.typeName;
-    // if (typeName === '')
-    // if (typeName === 'ZodArray') {
-    //     return `array of ${(zodType as ZodArray<any>).element}`;
-    // }
-    // return typeName;
 }

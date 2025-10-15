@@ -1,69 +1,60 @@
 import type z from "zod";
-import { firstLetterUppercase } from "../util";
-import { ZodOptional } from "zod";
 import type { OutputSchema } from "./types";
+import JSON5 from 'json5';
 
 export const parseResponse = <O extends OutputSchema>(
     response: string,
     outputSignature: O
 ): z.infer<O> => {
-    const outputs = Object.entries(outputSignature.shape);
-    const lines = response.split('\n');
-    const result: Record<string, unknown> = {};
-    for (const [key, schema] of outputs) {
-        const upperKey = firstLetterUppercase(key);
-        const match = lines.find(line => line.includes(`${upperKey}:`));
-        if (match) {
-            const value = match.slice(key.length + 1).trim();
-            const parsedValue = parseValueForType(value, schema);
-            result[key] = parsedValue;
-        }
-    }
-    return outputSignature.parse(result);
+    const asJson = extractJsonFromText(response, outputSignature);
+    return outputSignature.parse(asJson);
 }
 
-const parseValueForType = (value: string, valueSchema: z.ZodTypeAny) => {
-    // console.log(`In parseValueForType. value: ${value}.`);
-    const unwrappedSchema = valueSchema instanceof ZodOptional ? valueSchema.unwrap() : valueSchema;
-    const schemaType = unwrappedSchema._def.typeName
+function extractJsonFromText<O extends OutputSchema>(text: string, outputSignature: O): any | null {
+    const jsonBlocks = extractJsonBlocks(text);
 
-    if (schemaType === 'ZodNumber') {
-        // console.log('is ZodNumber');
-        return Number(value);
+    for (const jsonBlock of jsonBlocks) {
+        try {
+            return outputSignature.parse(jsonBlock);
+        } catch (err) { }
     }
 
-    if (schemaType === 'ZodBoolean') {
-        // console.log('is ZodBoolean');
-        if (value === 'True') {
-            return true;
-        } else if (value === 'False') {
-            return false;
+    throw new Error('No JSON block matching schema found');
+}
+
+export function extractJsonBlocks(text: string): object[] {
+    const blocks: object[] = [];
+    let depth = 0;
+    let buffer = '';
+    let inBlock = false;
+
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+
+        if (char === '{') {
+            if (!inBlock) {
+                inBlock = true;
+                buffer = '';
+            }
+            depth++;
+        }
+
+        if (inBlock) buffer += char;
+
+        if (char === '}') {
+            depth--;
+            if (depth === 0 && inBlock) {
+                try {
+                    const parsed = JSON5.parse(buffer);
+                    blocks.push(parsed);
+                } catch {
+                    // skip invalid JSON
+                }
+                inBlock = false;
+                buffer = '';
+            }
         }
     }
 
-    if (schemaType === 'ZodEnum') {
-        // console.log('value is an ZodEnum');
-        const enumValues = unwrappedSchema.options;
-
-        const match: string | number | undefined = enumValues.find((e: unknown) => typeof e === 'string' && e.toLowerCase() === value.toLowerCase());
-        // console.log('got match', match);
-        if (!match) {
-            return value;
-        }
-
-        return match;
-    }
-
-    if (schemaType === 'ZodObject' || schemaType === 'ZodRecord') {
-        // console.log('value is an ZodObject');
-        return JSON.parse(value);
-    }
-
-    if (schemaType === 'ZodArray') {
-        // console.log('value is a ZodArray');
-        return JSON.parse(value);
-    }
-
-    // console.log('value is string or unknown', unwrappedSchema._def.typeName);
-    return value;
+    return blocks;
 }

@@ -1,18 +1,27 @@
 import type z from "zod";
 import { firstLetterUppercase } from "../../util";
-import type { InputSchema, OutputSchema } from "../types";
+import type { InputSchema, OutputSchema, Signature } from "../types";
+import { generateMock } from "@anatine/zod-mock";
 
 export const printExamples = <I extends InputSchema, O extends OutputSchema>(examples: { given: z.infer<I>, expect: z.infer<O>, incorrect?: string }[]) => {
-    return examples.map((example, index) => {
-        const inputs = Object.entries(example.given)
-            .map(([key, value]) => firstLetterUppercase(key) + ": " + parseTypeForValue(value))
-            .join('\n');
+    return examples.map((example, index) =>
+        printExample(example, index)
+    ).join('\n');
+}
 
-        const outputs = Object.entries(example.expect)
-            .map(([key, value]) => firstLetterUppercase(key) + ": " + parseTypeForValue(value))
-            .join('\n');
+export const printDefaultExample = <I extends InputSchema, O extends OutputSchema>(signature: Signature<I, O>,) => {
+    const outputMock = generateMock(signature.outputs);
+    return JSON.stringify(outputMock);
+}
 
-        return `
+const printExample = <I extends InputSchema, O extends OutputSchema>(example: { given: z.infer<I>, expect: z.infer<O>, incorrect?: string }, index: number) => {
+    const inputs = Object.entries(example.given)
+        .map(([key, value]) => firstLetterUppercase(key) + ": " + parseTypeForValue(value))
+        .join('\n');
+
+    const outputs = JSON.stringify(example.expect);
+
+    return `
 ### Example ${index + 1} ${example.incorrect ? `[Bad example - response is wrong because ${example.incorrect}]` : ''}:
 Given:
 '''
@@ -24,9 +33,9 @@ Return:
 ${outputs}
 '''
 
-        `;
-    }).join('\n');
+    `;
 }
+
 
 const parseTypeForValue = (value: unknown) => {
     if (typeof value === 'boolean') {

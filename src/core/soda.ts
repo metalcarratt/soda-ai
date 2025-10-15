@@ -36,7 +36,6 @@ export const soda = <I extends InputSchema, O extends OutputSchema>(
                 const toolDebugCollector = debugCollector.createSubSection('Call tools');
 
                 await callTools(model, sig, input, toolData, toolDebugCollector);
-                // console.log('Got tool context', toolContext);
                 toolDebugCollector.collect('Final tool context:', printCallsMade(toolData));
             }
             const toolContext = toolData.callsMade.length > 0 ? printCallsMade(toolData) : undefined;
@@ -48,16 +47,10 @@ export const soda = <I extends InputSchema, O extends OutputSchema>(
 
             const response = await model.call(prompt);
             if (debug) {
-                console.log('response', response);
                 debugCollector.collect('Main LLM response', response);
             }
 
             const data = parseResponse(`${response}`, sig.outputs);
-            // if (Object.keys(data).length !== sig.outputs.length) {
-            //     // retry
-            //     response = await model.call(prompt);
-            //     data = parseResponse(`${response}`, sig);
-            // }
 
             if (debug) {
                 debugCollector.collect('Resulting data', JSON.stringify(data, null, 2), false);
