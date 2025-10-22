@@ -1,11 +1,11 @@
-import { parseResponse } from "./parse-response";
-import { createPrompt } from "./prompting/create-prompt";
 import type z from "zod";
 import { callTools } from "../tools";
 import type { InputSchema, Model, OutputSchema, Signature } from "./types";
 import { getDebugCollector } from "../debug-collector";
 import util from 'node:util';
 import { createToolData, printCallsMade } from '../tools/tool-data';
+import { callModel } from "./call-model";
+import { callModelChunked } from "./chunking/call-model-chunked";
 
 type Options = {
     debug?: boolean
@@ -20,11 +20,7 @@ export const soda = <I extends InputSchema, O extends OutputSchema>(
     type Input = z.infer<I>;
     type Output = z.infer<O>;
 
-    type CallResponse = {
-        prompt: string,
-        raw: string,
-        data: Output
-    }
+    type CallResponse = Output;
 
     const call = async (input: Input, options?: Options): Promise<CallResponse> => {
         const debug = options?.debug ?? false;
@@ -40,28 +36,16 @@ export const soda = <I extends InputSchema, O extends OutputSchema>(
             }
             const toolContext = toolData.callsMade.length > 0 ? printCallsMade(toolData) : undefined;
 
-            const prompt = createPrompt(sig, input, examples, toolContext);
-            if (debug) {
-                debugCollector.collect('Main prompt', prompt);
-            }
-
-            const response = await model.call(prompt);
-            if (debug) {
-                debugCollector.collect('Main LLM response', response);
-            }
-
-            const data = parseResponse(`${response}`, sig.outputs);
+            const data = sig.chunking
+                ? await callModelChunked(sig, input, debug, debugCollector, model, examples, toolContext)
+                : await callModel(sig, input, debug, debugCollector, model, examples, toolContext);
 
             if (debug) {
                 debugCollector.collect('Resulting data', JSON.stringify(data, null, 2), false);
                 debugCollector.printReport();
             }
 
-            return {
-                prompt,
-                raw: response,
-                data
-            };
+            return data;
         } catch (error) {
 
             if (debug) {

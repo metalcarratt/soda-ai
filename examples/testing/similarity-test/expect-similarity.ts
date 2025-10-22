@@ -2,12 +2,12 @@ import { testSimilarity } from "./similarity-test";
 import { expect } from 'vitest';
 
 export const expectSimilarity = async (expected: string, provided?: string,) => {
-    const response = await testSimilarity({
+    const { result } = await testSimilarity({
         provided: provided ?? '',
         expected
     });
 
-    console.log(response);
+    // console.log(result);
 
-    expect(response.data.result).toBe(true);
+    expect(result).toBe(true);
 }

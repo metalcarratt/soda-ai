@@ -6,4 +6,5 @@ Contents:
 - [Providing more guidance](./providing-more-guidance.md)
 - [Tooling / Agentic AI](./agentic-ai.md)
 - [Debugging](./debugging.md)
+- [Chunking](./chunking.md)
 - Function chaining and branching - TBD

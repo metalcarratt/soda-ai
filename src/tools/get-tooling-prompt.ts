@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { InputSchema, OutputSchema, Signature } from "../core";
 import type { ToolData } from "./types";
 import { printCallsMade, printToolData } from "./tool-data";
+import { printJson } from "../core/prompting/print-schema";
 
 export const getToolingPrompt = <I extends InputSchema, O extends OutputSchema>(
     signature: Signature<I, O>,
@@ -15,9 +16,10 @@ export const getToolingPrompt = <I extends InputSchema, O extends OutputSchema>(
     const toolContext = printCallsMade(tools);
 
     const expectedOutputs = Object.keys(signature.outputs.shape).join(', ');
-    const providedInputs = Object.keys(signature.inputs.shape)
-        .map(inputName => `- ${inputName}: ${userInput[inputName]}`)
-        .join('\n')
+    // const providedInputs = Object.keys(signature.inputs.shape)
+    //     .map(inputName => `- ${inputName}: ${userInput[inputName]}`)
+    //     .join('\n');
+    const providedInputs = printJson(userInput);
 
     return `
 Your task is to help prepare the prompt for another model by reviewing what the

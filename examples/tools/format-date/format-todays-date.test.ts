@@ -4,17 +4,17 @@ import { formatTodaysDate } from "./format-todays-date.js";
 
 describe('format todays date', () => {
     test('nz format', async () => {
-        const response = await formatTodaysDate({ format: 'DD/MM/YYYY' });
+        const { date } = await formatTodaysDate({ format: 'DD/MM/YYYY' });
         // console.log(response);
 
-        expect(response.data.date).toBe(formatDdMmYyyy());
+        expect(date).toBe(formatDdMmYyyy());
     });
 
     test('year first', async () => {
-        const response = await formatTodaysDate({ format: 'YYYY/MM/DD' });
+        const { date } = await formatTodaysDate({ format: 'YYYY/MM/DD' });
         // console.log(response);
 
-        expect(response.data.date).toBe(formatYyyyMmDd());
+        expect(date).toBe(formatYyyyMmDd());
     });
 }, 20000);
 

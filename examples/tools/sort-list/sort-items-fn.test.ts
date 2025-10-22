@@ -4,10 +4,10 @@ import { sortList } from "./sort-items-fn.js";
 
 describe.only('sort list', () => {
     test('sort three items', async () => {
-        const response = await sortList({ items: [3, 2, 1] });
-        // console.log(response);
+        const { sorted } = await sortList({ items: [3, 2, 1] });
+        // console.log(sorted);
 
-        expect(response.data.sorted).toStrictEqual([1, 2, 3]);
+        expect(sorted).toStrictEqual([1, 2, 3]);
     });
 }, 20000);
 

@@ -1,7 +1,7 @@
 import { numberQuestionFn } from "./number-question-fn";
 
 const question = "How many cats are in a typical litter?";
-const response = await numberQuestionFn({ question });
+const { answer, reason } = await numberQuestionFn({ question }, { debug: true });
 
-console.log('Answer: ', response.data.answer);
-console.log('Reason: ', response.data.reason);
+console.log('Answer: ', answer);
+console.log('Reason: ', reason);

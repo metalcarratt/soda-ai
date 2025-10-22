@@ -1,7 +1,7 @@
 import { formatTodaysDate } from "./format-todays-date";
 
-// const response = await formatTodaysDate({ format: 'DD/MM/YYYY' }, { debug: true });
-// console.log('Today\'s Date in DD/MM/YYYY:', response.data.date);
+// const { date } = await formatTodaysDate({ format: 'DD/MM/YYYY' }, { debug: true });
+// console.log('Today\'s Date in DD/MM/YYYY:', date);
 
-const response2 = await formatTodaysDate({ format: 'YYYY-MM-DD' }, { debug: true });
-console.log('Today\'s Date in [YYYY-MM-DD]:', response2.data.date);
+const { date } = await formatTodaysDate({ format: 'YYYY-MM-DD' }, { debug: true });
+console.log('Today\'s Date in [YYYY-MM-DD]:', date);

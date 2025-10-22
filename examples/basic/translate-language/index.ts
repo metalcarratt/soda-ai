@@ -1,7 +1,8 @@
 import { translateFn } from "./translate-fn";
 
-const response = await translateFn({
+const { translation } = await translateFn({
     text: 'Good morning',
     language: 'Chinese'
-});
-console.log('Translation:', response.data.translation);
+}, { debug: true });
+
+console.log('Translation:', translation);

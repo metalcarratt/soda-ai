@@ -37,3 +37,10 @@ and captured while hiding in a barn near Bowling Green, Virginia, and died later
 26, 1865. Four co-conspirators, Powell, George Atzerodt, David Herold, and Mary Surratt, were hanged 
 at the gallows of the Old Penitentiary, on the site of present-day Fort McNair, on July 7, 1865.
 `;
+
+export const paragraph1 = `On the evening of April 14, 1865, while attending a special performance of the comedy, 
+"Our American Cousin," President Abraham Lincoln was shot. Accompanying him at Ford's 
+Theatre that night were his wife, Mary Todd Lincoln, a twenty-eight year-old officer 
+named Major Henry R. Rathbone, and Rathbone's fiancée, Clara Harris. After the play 
+was in progress, a figure with a drawn derringer pistol stepped into the presidential 
+box, aimed, and fired. The president slumped forward.`;

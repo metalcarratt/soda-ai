@@ -9,7 +9,7 @@ const schema = {
         language: z.string()
     }),
     outputs: z.object({
-        translation: z.string()
+        translation: z.string(),
     })
 }
 

@@ -10,8 +10,12 @@ const response = await translateFn({
   language: "Chinese",
 });
 
-response.data.translation; // 早上好
+response.translation; // 早上好
 ```
+
+To run:
+
+- `sh scripts/translate-language.sh`
 
 Shows:
 
@@ -31,8 +35,12 @@ Ask a question that expects a number as a response
 const question = "How many cats are in a typical litter?";
 const response = await numberQuestionFn({ question });
 
-response.data.answer; // 3.1
+response.answer; // 3.1
 ```
+
+To run:
+
+- `sh scripts/answer-with-number.sh`
 
 Shows:
 
@@ -53,8 +61,12 @@ Check an email for inappropriate content (imagine this as part of an email inges
 const email = "Hi Bob, I've got the stuff. Sending it through now.";
 const response = await checkEmailFn({ email });
 
-response.data.safety === "safe"; // true
+response.safety === "safe"; // true
 ```
+
+To run:
+
+- `sh scripts/email-checker.sh`
 
 Shows:
 
@@ -73,8 +85,12 @@ Gets today's date and formats it according to the user's format instructions
 ```ts
 const response = await formatTodaysDate({ format: "DD/MM/YYYY" });
 
-response.data.date; // 08/10/2025
+response.date; // 08/10/2025
 ```
+
+To run:
+
+- `sh scripts/format-date.sh`
 
 Shows:
 
@@ -95,8 +111,12 @@ Sorts a list of numbers
 const unsortedList = [9, 5, 7, 21, 64, 8, 2];
 const response = await sortList({ items: unsortedList });
 
-response.data.sorted; // [2, 5, 7, 8, 9, 21, 64]
+response.sorted; // [2, 5, 7, 8, 9, 21, 64]
 ```
+
+To run:
+
+- `sh scripts/sort-list.sh`
 
 Shows:
 
@@ -107,3 +127,55 @@ See:
 - [Sort Items Tool](./tools/sort-list/sort-items-tool.ts)
 - [Definition](./tools/sort-list/sort-items-fn.ts)
 - [Usage](./tools/sort-list/index.ts)
+
+## Label entities
+
+Labels all entities in a provided text.
+
+```ts
+const { entities } = await labelEntities({ text }, { debug: true });
+console.log("Entities: ", entities);
+
+// [
+//  { entity: 'Abraham Lincoln', type: 'Person' },
+//  { entity: 'Mary Todd Lincoln', type: 'Person' },
+//  { entity: 'Henry R. Rathbone', type: 'Person' }
+// ]
+```
+
+To run:
+
+- `sh scripts/label-entities.sh`
+
+Shows:
+
+- Chunking
+
+See:
+
+- [Definition](./nlp-tasks/label-entities/label-entities.ts)
+- [Usage](./nlp-tasks/label-entities/index.ts)
+
+## Resolve coreferences
+
+Finds all occurences of an entity in a text (including third person references, etc.)
+
+```ts
+const { mentions } = await resolveCoreferences(
+  { text: paragraph1, entity: "Abraham Lincoln" },
+  { debug: true }
+);
+// mentions = [
+//   { text: 'President Abraham Lincoln', start: 0, end: 23 },
+//   { text: 'him', start: 24, end: 26 }
+// ]
+```
+
+To run:
+
+- `sh scripts/resolve-coreferences.sh`
+
+See:
+
+- [Definition](./nlp-tasks/resolve-coreferences/resolve-coreferences.ts)
+- [Usage](./nlp-tasks/resolve-coreferences/index.ts)

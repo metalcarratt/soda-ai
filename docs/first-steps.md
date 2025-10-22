@@ -42,7 +42,7 @@ const schema = {
   }),
 };
 
-export const translateFn = soda(myModel, schema);
+export const translate = soda(myModel, schema);
 ```
 
 The schema object above defines three important things:
@@ -65,15 +65,9 @@ const response = await translate({
     language: "English"
 });
 
-console.log(response.data.translation);
+console.log(response.translation);
 
 > Good morning!
 ```
-
-The response object contains three properties:
-
-- `data` the data returned from you function call. This is typed in the format of your `outputs` schema. For example, the translation function above defines `outputs` as an object with a `translation` property which is a string. So to get the translated text you can call `response.data.translation`.
-- `prompt` - the prompt SODA-AI generated for you (useful for debugging or fine-tuning your function)
-- `raw` - the raw response from the AI model (again, useful if you didn't get expected results)
 
 And that's it!

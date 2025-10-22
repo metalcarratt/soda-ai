@@ -3,22 +3,22 @@ import { testSimilarity } from "./similarity-test.js";
 
 describe('similarity test', () => {
     test('Greetings in English', async () => {
-        const response = await testSimilarity({
+        const { result } = await testSimilarity({
             provided: 'Good morning',
             expected: "Hello"
         });
-        // console.log(response);
+        // console.log(result);
 
-        expect(response.data.result).toBe(true);
+        expect(result).toBe(true);
     });
 
     test('A word and a number', async () => {
-        const response = await testSimilarity({
+        const { result } = await testSimilarity({
             provided: '9',
             expected: "dog"
         });
-        // console.log(response);
+        // console.log(result);
 
-        expect(response.data.result).toBe(false);
+        expect(result).toBe(false);
     });
 }, 10000)

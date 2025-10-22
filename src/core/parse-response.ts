@@ -16,7 +16,9 @@ function extractJsonFromText<O extends OutputSchema>(text: string, outputSignatu
     for (const jsonBlock of jsonBlocks) {
         try {
             return outputSignature.parse(jsonBlock);
-        } catch (err) { }
+        } catch (err) {
+            // console.log('error parsing json block', err);
+        }
     }
 
     throw new Error('No JSON block matching schema found');
@@ -45,10 +47,15 @@ export function extractJsonBlocks(text: string): object[] {
             depth--;
             if (depth === 0 && inBlock) {
                 try {
-                    const parsed = JSON5.parse(buffer);
+                    // console.log('found a buffer', buffer);
+                    const sanitized = escapeNewlinesInStrings(buffer);
+                    // console.log('sanitized', sanitized);
+                    const parsed = JSON5.parse(sanitized);
+                    // console.log('parsed', parsed);
                     blocks.push(parsed);
-                } catch {
+                } catch (err) {
                     // skip invalid JSON
+                    // console.log('Error parsing json', err);
                 }
                 inBlock = false;
                 buffer = '';
@@ -57,4 +64,10 @@ export function extractJsonBlocks(text: string): object[] {
     }
 
     return blocks;
+}
+
+export function escapeNewlinesInStrings(input: string): string {
+    return input.replace(/"(?:[^"\\]|\\.)*"/gs, (match) => {
+        return match.replace(/\n/g, '\\n');
+    });
 }

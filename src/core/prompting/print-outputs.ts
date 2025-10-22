@@ -4,7 +4,8 @@ import { printSchema } from './print-schema';
 
 export const printOutputs = <I extends InputSchema, O extends OutputSchema>(signature: Signature<I, O>, inputs: z.infer<I>) => {
 
-    let schema = printSchema(signature.outputs);
+    const mergedSchema = signature.outputs.merge(signature.inputs);
+    let schema = printSchema(mergedSchema);
 
     for (let key of Object.keys(inputs)) {
         const searchKey = `{${key}}`;

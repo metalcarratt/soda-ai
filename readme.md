@@ -51,7 +51,7 @@ const response = await translate({
     language: "English"
 });
 
-console.log(response.data.translation);
+console.log(response.translation);
 
 > Good morning!
 ```
